@@ -161,6 +161,11 @@ setup_gh_auth() {
     # Check if already authenticated
     if gh auth status &>/dev/null; then
         log_substep "GitHub CLI already authenticated"
+        # Ensure git is configured to use gh for credentials
+        if ! git config --global --get credential.https://github.com.helper | grep -q "gh auth"; then
+            log_substep "Configuring git to use GitHub CLI for credentials"
+            gh auth setup-git
+        fi
         return 0
     fi
 
@@ -188,6 +193,9 @@ setup_gh_auth() {
 
                 if gh auth status &>/dev/null; then
                     log_success "GitHub CLI authenticated successfully"
+                    # Configure git to use gh for credentials
+                    log_substep "Configuring git to use GitHub CLI for credentials"
+                    gh auth setup-git
                     break
                 else
                     echo ""
