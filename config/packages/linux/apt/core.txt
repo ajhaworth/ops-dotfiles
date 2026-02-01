@@ -1,0 +1,25 @@
+# core.txt - Essential CLI tools for Linux
+
+# File management
+tree
+fd-find
+ripgrep
+
+# Process and system
+htop
+btop
+
+# Networking
+curl
+wget
+net-tools
+
+# Archives
+unzip
+zip
+
+# Text processing
+jq
+
+# Shell enhancements
+zsh

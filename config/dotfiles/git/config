@@ -127,8 +127,10 @@
     # Show aliases
     aliases = config --get-regexp alias
 
-[credential]
-    helper = osxkeychain
+# Credential helper is OS-specific - set in ~/.gitconfig.local
+# macOS: helper = osxkeychain
+# Linux: helper = cache --timeout=3600
+# Or use SSH keys instead of HTTPS
 
 [filter "lfs"]
     clean = git-lfs clean -- %f

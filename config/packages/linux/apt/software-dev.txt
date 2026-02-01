@@ -1,0 +1,12 @@
+# software-dev.txt - Development tools for Linux
+
+# Version control
+git
+gh                  # GitHub CLI
+
+# Build essentials
+build-essential
+cmake
+
+# Linting
+shellcheck
