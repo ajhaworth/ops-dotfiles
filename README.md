@@ -1,4 +1,4 @@
-# Setup-OS
+# Devbox
 
 Cross-platform workstation setup using simple shell scripts with profile-based customization.
 
@@ -6,8 +6,8 @@ Cross-platform workstation setup using simple shell scripts with profile-based c
 
 ```bash
 # Clone the repository
-git clone https://github.com/yourusername/setup-os.git
-cd setup-os
+git clone https://github.com/ajhaworth/dotfiles.git
+cd dotfiles
 
 # Run setup with profile selection
 ./setup.sh
@@ -115,7 +115,7 @@ Machine-specific settings go in `.local` files (not tracked by git):
 ## Project Structure
 
 ```
-setup-os/
+dotfiles/
 ├── setup.sh                    # Entry point
 ├── lib/                        # Shared libraries
 │   ├── common.sh               # Colors, logging
