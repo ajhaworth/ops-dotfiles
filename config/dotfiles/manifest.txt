@@ -1,8 +1,9 @@
 # manifest.txt - Dotfiles symlink mapping
-# Format: source|destination|backup
+# Format: source|destination|backup|condition
 # source: path relative to repo root
 # destination: absolute path (~ expands to $HOME)
 # backup: yes/no (optional, defaults to yes)
+# condition: profile variable name (optional, entry skipped if variable is "false")
 
 # Shell configuration
 config/dotfiles/shell/zshrc|~/.zshrc
@@ -10,7 +11,7 @@ config/dotfiles/shell/bashrc|~/.bashrc
 config/dotfiles/shell/tab-colors.zsh|~/.config/shell/tab-colors.zsh
 
 # Git configuration
-config/dotfiles/git/config|~/.gitconfig
+config/dotfiles/git/config|~/.gitconfig||DOTFILES_GIT
 
 # Tmux configuration
 config/dotfiles/tmux/tmux.conf|~/.tmux.conf

@@ -134,7 +134,9 @@ remove_symlink() {
 }
 
 # Process a manifest file
-# Format: source|destination|backup (backup is optional, defaults to yes)
+# Format: source|destination|backup|condition
+#   - backup is optional, defaults to yes
+#   - condition is optional, a profile variable name that must be "true"
 # Usage: process_manifest manifest_file
 process_manifest() {
     local manifest="$1"
@@ -146,7 +148,7 @@ process_manifest() {
         return 1
     fi
 
-    while IFS='|' read -r source destination backup || [[ -n "$source" ]]; do
+    while IFS='|' read -r source destination backup condition || [[ -n "$source" ]]; do
         # Skip empty lines and comments
         [[ -z "$source" ]] && continue
         [[ "$source" =~ ^[[:space:]]*# ]] && continue
@@ -155,6 +157,15 @@ process_manifest() {
         source="$(echo "$source" | xargs)"
         destination="$(echo "$destination" | xargs)"
         backup="$(echo "${backup:-yes}" | xargs)"
+        condition="$(echo "${condition:-}" | xargs)"
+
+        # Check condition if specified
+        if [[ -n "$condition" ]]; then
+            local condition_value="${!condition:-true}"
+            if [[ "$condition_value" != "true" ]]; then
+                continue
+            fi
+        fi
 
         # Make source path absolute (relative to repo root)
         if [[ "$source" != /* ]]; then
@@ -179,7 +190,7 @@ check_manifest() {
         return 1
     fi
 
-    while IFS='|' read -r source destination _ || [[ -n "$source" ]]; do
+    while IFS='|' read -r source destination _ condition || [[ -n "$source" ]]; do
         # Skip empty lines and comments
         [[ -z "$source" ]] && continue
         [[ "$source" =~ ^[[:space:]]*# ]] && continue
@@ -187,6 +198,15 @@ check_manifest() {
         # Trim whitespace
         source="$(echo "$source" | xargs)"
         destination="$(echo "$destination" | xargs)"
+        condition="$(echo "${condition:-}" | xargs)"
+
+        # Check condition if specified
+        if [[ -n "$condition" ]]; then
+            local condition_value="${!condition:-true}"
+            if [[ "$condition_value" != "true" ]]; then
+                continue
+            fi
+        fi
 
         # Make paths absolute
         if [[ "$source" != /* ]]; then

@@ -123,7 +123,7 @@ cmd_dotfiles_ls() {
     local count_wrong=0
     local count_conflict=0
 
-    while IFS='|' read -r source destination _ || [[ -n "$source" ]]; do
+    while IFS='|' read -r source destination _ condition || [[ -n "$source" ]]; do
         # Skip empty lines and comments
         [[ -z "$source" ]] && continue
         [[ "$source" =~ ^[[:space:]]*# ]] && continue
@@ -131,6 +131,15 @@ cmd_dotfiles_ls() {
         # Trim whitespace
         source="$(echo "$source" | xargs)"
         destination="$(echo "$destination" | xargs)"
+        condition="$(echo "${condition:-}" | xargs)"
+
+        # Check condition if specified
+        if [[ -n "$condition" ]]; then
+            local condition_value="${!condition:-true}"
+            if [[ "$condition_value" != "true" ]]; then
+                continue
+            fi
+        fi
 
         # Make paths absolute
         local abs_source="$source"
@@ -871,6 +880,11 @@ main() {
 
     # Export options
     export DRY_RUN FORCE
+
+    # Load profile if specified (needed for subcommands)
+    if [[ -n "${PROFILE:-}" ]]; then
+        load_profile "$PROFILE"
+    fi
 
     # Check for subcommands
     if [[ ${#args[@]} -gt 0 ]]; then

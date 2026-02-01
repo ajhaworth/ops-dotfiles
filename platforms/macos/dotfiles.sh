@@ -32,10 +32,12 @@ setup_dotfiles() {
 create_local_overrides() {
     log_step "Checking local override files"
 
-    local local_files=(
-        "$HOME/.zshrc.local"
-        "$HOME/.gitconfig.local"
-    )
+    local local_files=("$HOME/.zshrc.local")
+
+    # Only create gitconfig.local if git dotfiles are enabled
+    if [[ "${DOTFILES_GIT:-true}" == "true" ]]; then
+        local_files+=("$HOME/.gitconfig.local")
+    fi
 
     for file in "${local_files[@]}"; do
         if [[ ! -f "$file" ]]; then
