@@ -368,6 +368,42 @@ EOF
     fi
 }
 
+# Configure git credential helper for GitHub CLI in .gitconfig.local
+# We write to .gitconfig.local instead of using 'gh auth setup-git' because
+# ~/.gitconfig is symlinked to our shared config, and the credential helper
+# path is OS-specific (e.g., /usr/bin/gh on Linux, /opt/homebrew/bin/gh on macOS)
+configure_gh_credential_helper() {
+    local config_file="$HOME/.gitconfig.local"
+    local gh_path
+    gh_path="$(which gh)"
+
+    # Check if credential helper is already configured
+    if grep -q "gh auth git-credential" "$config_file" 2>/dev/null; then
+        log_substep "GitHub CLI credential helper already configured"
+        return 0
+    fi
+
+    log_substep "Adding GitHub CLI credential helper to .gitconfig.local"
+
+    if is_dry_run; then
+        log_dry "Would add credential helper to $config_file"
+        return 0
+    fi
+
+    # Append credential helper configuration
+    cat >> "$config_file" << EOF
+
+# GitHub CLI credential helper
+[credential "https://github.com"]
+    helper =
+    helper = !${gh_path} auth git-credential
+[credential "https://gist.github.com"]
+    helper =
+    helper = !${gh_path} auth git-credential
+EOF
+    log_success "Configured git to use GitHub CLI for credentials"
+}
+
 # Setup GitHub CLI authentication
 setup_gh_auth() {
     log_step "Checking GitHub CLI authentication"
@@ -381,11 +417,7 @@ setup_gh_auth() {
     # Check if already authenticated
     if gh auth status &>/dev/null; then
         log_substep "GitHub CLI already authenticated"
-        # Ensure git is configured to use gh for credentials
-        if ! git config --global --get credential.https://github.com.helper | grep -q "gh auth"; then
-            log_substep "Configuring git to use GitHub CLI for credentials"
-            gh auth setup-git
-        fi
+        configure_gh_credential_helper
         return 0
     fi
 
@@ -413,9 +445,7 @@ setup_gh_auth() {
 
                 if gh auth status &>/dev/null; then
                     log_success "GitHub CLI authenticated successfully"
-                    # Configure git to use gh for credentials
-                    log_substep "Configuring git to use GitHub CLI for credentials"
-                    gh auth setup-git
+                    configure_gh_credential_helper
                     break
                 else
                     echo ""
