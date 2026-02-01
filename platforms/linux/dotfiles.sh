@@ -32,25 +32,32 @@ setup_dotfiles() {
 create_local_overrides() {
     log_step "Checking local override files"
 
-    local local_files=("$HOME/.zshrc.local")
+    # Create zshrc.local if needed
+    create_zshrc_local
 
-    # Only create gitconfig.local if git dotfiles are enabled
+    # Create gitconfig.local if git dotfiles are enabled
     if [[ "${DOTFILES_GIT:-true}" == "true" ]]; then
-        local_files+=("$HOME/.gitconfig.local")
+        create_gitconfig_local
+    fi
+}
+
+# Create ~/.zshrc.local with template
+create_zshrc_local() {
+    local file="$HOME/.zshrc.local"
+
+    if [[ -f "$file" ]]; then
+        log_substep "Already exists: $file"
+        return 0
     fi
 
-    for file in "${local_files[@]}"; do
-        if [[ ! -f "$file" ]]; then
-            log_substep "Creating: $file"
+    log_substep "Creating: $file"
 
-            if is_dry_run; then
-                log_dry "touch $file"
-                continue
-            fi
+    if is_dry_run; then
+        log_dry "touch $file"
+        return 0
+    fi
 
-            case "$file" in
-                *zshrc.local)
-                    cat > "$file" << 'EOF'
+    cat > "$file" << 'EOF'
 # ~/.zshrc.local - Machine-specific shell configuration
 # This file is sourced by .zshrc and is not tracked by git
 
@@ -59,9 +66,53 @@ create_local_overrides() {
 # export PATH="$HOME/custom/bin:$PATH"
 # alias myalias='my-command'
 EOF
-                    ;;
-                *gitconfig.local)
-                    cat > "$file" << 'EOF'
+}
+
+# Create ~/.gitconfig.local, prompting for user info if interactive
+create_gitconfig_local() {
+    local file="$HOME/.gitconfig.local"
+
+    if [[ -f "$file" ]]; then
+        log_substep "Already exists: $file"
+        return 0
+    fi
+
+    log_substep "Creating: $file"
+
+    if is_dry_run; then
+        log_dry "Would prompt for git name and email (interactive) or create template"
+        return 0
+    fi
+
+    # Interactive mode: prompt for git user info
+    if [[ -t 0 ]] && [[ "${FORCE:-false}" != "true" ]]; then
+        log_info "Setting up git configuration..."
+        echo ""
+
+        prompt_input "Git user name" ""
+        local git_name="$REPLY"
+
+        prompt_input "Git email" ""
+        local git_email="$REPLY"
+
+        cat > "$file" << EOF
+# ~/.gitconfig.local - Machine-specific git configuration
+# This file is included by .gitconfig and is not tracked by git
+
+[user]
+    name = $git_name
+    email = $git_email
+
+# Optional: signing key
+# [user]
+#     signingkey = YOUR_GPG_KEY_ID
+# [commit]
+#     gpgsign = true
+EOF
+        log_success "Git configuration saved to $file"
+    else
+        # Non-interactive: create template with placeholders
+        cat > "$file" << 'EOF'
 # ~/.gitconfig.local - Machine-specific git configuration
 # This file is included by .gitconfig and is not tracked by git
 
@@ -76,12 +127,6 @@ EOF
 # [commit]
 #     gpgsign = true
 EOF
-                    ;;
-            esac
-
-            log_info "Please edit $file with your settings"
-        else
-            log_substep "Already exists: $file"
-        fi
-    done
+        log_info "Please edit $file with your settings"
+    fi
 }
