@@ -1,0 +1,6 @@
+# shell.txt - Shell tools for Linux
+# Note: eza, zoxide, starship, git-delta need special installation (see extras.sh)
+
+tmux
+bat
+fzf

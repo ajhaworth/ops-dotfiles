@@ -1,0 +1,3 @@
+# browsers.txt - Web browsers for Linux
+
+chromium-browser

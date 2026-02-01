@@ -7,6 +7,14 @@ gh                  # GitHub CLI
 # Build essentials
 build-essential
 cmake
+pkg-config
+
+# Library development headers
+libsqlite3-dev      # For go-sqlite3 CGO compilation
+libssl-dev          # OpenSSL headers
+
+# Runtime (installed after NodeSource repo added)
+nodejs              # Node.js 22.x from NodeSource
 
 # Linting
 shellcheck

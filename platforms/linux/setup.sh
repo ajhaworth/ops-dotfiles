@@ -9,15 +9,26 @@ linux_setup() {
     # Source Linux-specific modules
     source "$SCRIPT_DIR/platforms/linux/dotfiles.sh"
     source "$SCRIPT_DIR/platforms/linux/packages.sh"
+    source "$SCRIPT_DIR/platforms/linux/repositories.sh"
+    source "$SCRIPT_DIR/platforms/linux/extras.sh"
 
-    # Packages
+    # 1. External repositories (NodeSource for Node.js)
+    setup_repositories
+
+    # 2. Go installation (from tarball)
+    install_go
+
+    # 3. Packages (apt packages)
     if [[ "${PROFILE_PACKAGES:-false}" == "true" ]]; then
         setup_packages
     else
         log_info "Skipping packages (disabled in profile)"
     fi
 
-    # Dotfiles
+    # 4. Extra tools (starship, eza, delta, zoxide)
+    setup_extras
+
+    # 5. Dotfiles
     if [[ "${PROFILE_DOTFILES:-true}" == "true" ]]; then
         setup_dotfiles
     else
