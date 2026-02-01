@@ -1,0 +1,12 @@
+# apps.txt - Mac App Store applications
+# Format: ID|Name
+# Find IDs with: mas search <app_name>
+
+937984704|Amphetamine
+585829637|Todoist
+1295203466|Microsoft Remote Desktop
+497799835|Xcode
+1451685025|WireGuard
+409201541|Pages
+409183694|Keynote
+409203825|Numbers

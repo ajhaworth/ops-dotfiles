@@ -1,0 +1,16 @@
+# core.txt - Essential CLI tools
+# These are installed on both personal and work profiles
+
+git
+git-lfs
+curl
+wget
+jq
+yq
+htop
+tree
+watch
+coreutils
+findutils
+gnu-sed
+gawk

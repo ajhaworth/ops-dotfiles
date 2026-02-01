@@ -1,0 +1,6 @@
+# devops.txt - Infrastructure and network tools
+
+ansible
+nmap
+iperf3
+rsync

@@ -1,0 +1,5 @@
+# creative.txt - Graphics and design apps
+
+blender             # 3D creation
+gimp                # Image editing
+imageoptim          # Image optimization

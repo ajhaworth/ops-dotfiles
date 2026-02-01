@@ -1,0 +1,40 @@
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+._*
+
+# Local overrides (contain personal info)
+*.local
+
+# Backup directory
+.dotfiles_backup/
+
+# Editor files
+*.swp
+*.swo
+*~
+.idea/
+.vscode/
+
+# DCC (Digital Content Creation) app caches and binaries
+# Houdini
+dcc/houdini/backup/
+*.bgeo
+*.bgeo.sc
+*.geo
+*.pic
+*.rat
+*.sim
+*.simdata
+
+# Blender
+dcc/blender/cache/
+*.blend1
+*.blend2
+
+# Large reference files (FBX, etc.)
+dcc/reference/
+
+# DCC backups
+.dcc_backup/

@@ -1,0 +1,120 @@
+# ~/.zshrc - Zsh configuration
+
+# If not running interactively, don't do anything
+[[ $- != *i* ]] && return
+
+# ============================================================================
+# Path configuration
+# ============================================================================
+
+# Homebrew (Apple Silicon or Intel)
+if [[ -f /opt/homebrew/bin/brew ]]; then
+    eval "$(/opt/homebrew/bin/brew shellenv)"
+elif [[ -f /usr/local/bin/brew ]]; then
+    eval "$(/usr/local/bin/brew shellenv)"
+fi
+
+# Add local bin directories to PATH
+export PATH="$HOME/.local/bin:$HOME/bin:$PATH"
+
+# ============================================================================
+# History configuration
+# ============================================================================
+
+HISTFILE=~/.zsh_history
+HISTSIZE=50000
+SAVEHIST=50000
+
+setopt EXTENDED_HISTORY          # Write timestamps to history
+setopt HIST_EXPIRE_DUPS_FIRST    # Expire duplicates first when trimming
+setopt HIST_IGNORE_DUPS          # Don't record duplicates
+setopt HIST_IGNORE_SPACE         # Don't record commands starting with space
+setopt HIST_VERIFY               # Show command with history expansion before running
+setopt SHARE_HISTORY             # Share history between sessions
+
+# ============================================================================
+# Shell options
+# ============================================================================
+
+setopt AUTO_CD                   # cd by just typing directory name
+setopt AUTO_PUSHD                # Push the old directory onto the stack
+setopt PUSHD_IGNORE_DUPS         # Don't push duplicates
+setopt PUSHD_SILENT              # Don't print the stack after pushd
+setopt CORRECT                   # Spelling correction for commands
+setopt NO_BEEP                   # Don't beep on error
+setopt INTERACTIVE_COMMENTS      # Allow comments in interactive mode
+
+# ============================================================================
+# Completion
+# ============================================================================
+
+autoload -Uz compinit
+compinit
+
+# Case-insensitive completion
+zstyle ':completion:*' matcher-list 'm:{a-zA-Z}={A-Za-z}'
+
+# Menu selection
+zstyle ':completion:*' menu select
+
+# Colors in completion
+zstyle ':completion:*' list-colors "${(s.:.)LS_COLORS}"
+
+# ============================================================================
+# Key bindings
+# ============================================================================
+
+# Use emacs key bindings
+bindkey -e
+
+# Better history search
+bindkey '^[[A' history-search-backward
+bindkey '^[[B' history-search-forward
+
+# ============================================================================
+# Aliases and functions
+# ============================================================================
+
+# Source aliases file
+[[ -f ~/.aliases ]] && source ~/.aliases
+
+# Source functions file
+[[ -f ~/.functions ]] && source ~/.functions
+
+# Tab colors for Ghostty
+[[ -f ~/.config/shell/tab-colors.zsh ]] && source ~/.config/shell/tab-colors.zsh
+
+# ============================================================================
+# Tool integrations
+# ============================================================================
+
+# FZF
+if [[ -f ~/.fzf.zsh ]]; then
+    source ~/.fzf.zsh
+elif command -v fzf &>/dev/null; then
+    eval "$(fzf --zsh 2>/dev/null)" || true
+fi
+
+# Zoxide (smarter cd)
+command -v zoxide &>/dev/null && eval "$(zoxide init zsh)"
+
+# Direnv
+command -v direnv &>/dev/null && eval "$(direnv hook zsh)"
+
+# Starship prompt
+command -v starship &>/dev/null && eval "$(starship init zsh)"
+
+# Zsh plugins (if installed via Homebrew)
+if [[ -f /opt/homebrew/share/zsh-autosuggestions/zsh-autosuggestions.zsh ]]; then
+    source /opt/homebrew/share/zsh-autosuggestions/zsh-autosuggestions.zsh
+fi
+if [[ -f /opt/homebrew/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh ]]; then
+    source /opt/homebrew/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
+fi
+
+# ============================================================================
+# Local overrides
+# ============================================================================
+
+# Source machine-specific configuration
+[[ -f ~/.zshrc.local ]] && source ~/.zshrc.local

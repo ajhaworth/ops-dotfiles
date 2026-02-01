@@ -1,0 +1,6 @@
+# media.txt - Media applications (personal profile only)
+
+spotify             # Music streaming
+iina                # Video player
+vlc                 # Universal media player
+plex                # Media server client

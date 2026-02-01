@@ -1,0 +1,25 @@
+# manifest.txt - Dotfiles symlink mapping
+# Format: source|destination|backup
+# source: path relative to repo root
+# destination: absolute path (~ expands to $HOME)
+# backup: yes/no (optional, defaults to yes)
+
+# Shell configuration
+config/dotfiles/shell/zshrc|~/.zshrc
+config/dotfiles/shell/bashrc|~/.bashrc
+config/dotfiles/shell/tab-colors.zsh|~/.config/shell/tab-colors.zsh
+
+# Git configuration
+config/dotfiles/git/config|~/.gitconfig
+
+# Tmux configuration
+config/dotfiles/tmux/tmux.conf|~/.tmux.conf
+config/dotfiles/tmux/gitmux.conf|~/.config/tmux/gitmux.conf
+config/dotfiles/tmux/git-stats.sh|~/.config/tmux/git-stats.sh
+
+# Ghostty terminal
+config/dotfiles/ghostty/config|~/.config/ghostty/config
+
+# Claude Code
+config/dotfiles/claude/settings.json|~/.claude/settings.json
+config/dotfiles/claude/statusline-command.sh|~/.claude/statusline-command.sh

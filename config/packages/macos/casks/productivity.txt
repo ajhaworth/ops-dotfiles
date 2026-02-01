@@ -1,0 +1,4 @@
+# productivity.txt - Core productivity applications
+
+1password           # Password manager
+obsidian            # Note-taking

@@ -1,0 +1,127 @@
+# ~/.gitconfig - Universal Git configuration
+# Machine-specific settings (user, email, SSH) go in ~/.gitconfig.local
+
+[include]
+    path = ~/.gitconfig.local
+
+[core]
+    editor = vim
+    excludesfile = ~/.config/git/ignore
+    autocrlf = input
+    whitespace = fix
+    pager = less -FRX
+
+[init]
+    defaultBranch = main
+
+[pull]
+    rebase = true
+
+[push]
+    default = current
+    autoSetupRemote = true
+
+[fetch]
+    prune = true
+
+[rebase]
+    autoStash = true
+
+[merge]
+    conflictstyle = diff3
+    tool = vimdiff
+
+[diff]
+    colorMoved = default
+    algorithm = histogram
+
+[color]
+    ui = auto
+
+[color "branch"]
+    current = yellow reverse
+    local = yellow
+    remote = green
+
+[color "diff"]
+    meta = yellow bold
+    frag = magenta bold
+    old = red bold
+    new = green bold
+
+[color "status"]
+    added = green
+    changed = yellow
+    untracked = red
+
+[alias]
+    # Status
+    s = status -sb
+    st = status
+
+    # Branches
+    br = branch
+    co = checkout
+    cb = checkout -b
+    sw = switch
+    swc = switch -c
+
+    # Commits
+    ci = commit
+    cm = commit -m
+    ca = commit --amend
+    can = commit --amend --no-edit
+
+    # Diff
+    d = diff
+    ds = diff --staged
+    dc = diff --cached
+
+    # Log
+    l = log --oneline -20
+    lg = log --graph --oneline --decorate
+    lga = log --graph --oneline --decorate --all
+    hist = log --pretty=format:'%C(yellow)%h%Creset %ad | %s%d [%an]' --date=short
+
+    # Add
+    a = add
+    aa = add --all
+    ap = add --patch
+
+    # Push/Pull
+    p = push
+    pf = push --force-with-lease
+    pl = pull
+
+    # Stash
+    ss = stash
+    sp = stash pop
+    sl = stash list
+
+    # Reset
+    unstage = reset HEAD --
+    undo = reset --soft HEAD~1
+
+    # Remote
+    rv = remote -v
+
+    # Cleanup
+    cleanup = "!git branch --merged | grep -v '\\*\\|main\\|master' | xargs -n 1 git branch -d"
+
+    # Show last commit
+    last = log -1 HEAD --stat
+
+    # List contributors
+    contributors = shortlog -sn
+
+    # Show aliases
+    aliases = config --get-regexp alias
+
+[credential]
+    helper = osxkeychain
+
+[filter "lfs"]
+    clean = git-lfs clean -- %f
+    smudge = git-lfs smudge -- %f
+    process = git-lfs filter-process
+    required = true

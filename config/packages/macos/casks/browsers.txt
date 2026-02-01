@@ -1,0 +1,4 @@
+# browsers.txt - Web browsers
+
+google-chrome       # Primary browser
+zen-browser         # Privacy-focused browser

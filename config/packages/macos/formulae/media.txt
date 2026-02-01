@@ -1,0 +1,4 @@
+# media.txt - CLI media and image tools
+
+ffmpeg
+imagemagick

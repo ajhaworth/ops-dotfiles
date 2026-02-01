@@ -1,0 +1,43 @@
+# ~/.gitconfig.local - Machine-specific git configuration
+# This file is included by .gitconfig and should NOT be tracked in git
+# Copy this to ~/.gitconfig.local and customize for each machine
+
+[user]
+    name = YOUR_NAME
+    email = YOUR_EMAIL
+
+# ------------------------------------------------------------------------------
+# SSH URL Rewriting (OPTIONAL)
+# ------------------------------------------------------------------------------
+# Rewrite HTTPS to SSH only for specific orgs/users, not all of GitHub.
+# This keeps Homebrew and other tools working via HTTPS.
+#
+# Personal repos:
+# [url "git@github.com:YOUR_USERNAME/"]
+#     insteadOf = https://github.com/YOUR_USERNAME/
+#
+# Work repos (if using GitHub):
+# [url "git@github.com:YOUR_COMPANY/"]
+#     insteadOf = https://github.com/YOUR_COMPANY/
+
+# ------------------------------------------------------------------------------
+# Safe directories (if needed)
+# ------------------------------------------------------------------------------
+# [safe]
+#     directory = /path/to/repo
+
+# ------------------------------------------------------------------------------
+# Additional credential helpers
+# ------------------------------------------------------------------------------
+# [credential "https://your-git-server.com"]
+#     helper = osxkeychain
+
+# ------------------------------------------------------------------------------
+# GPG Signing (OPTIONAL)
+# ------------------------------------------------------------------------------
+# [user]
+#     signingkey = YOUR_GPG_KEY_ID
+# [commit]
+#     gpgsign = true
+# [tag]
+#     gpgsign = true

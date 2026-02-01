@@ -1,0 +1,22 @@
+# software-dev.txt - Languages, runtimes, and development tools
+
+# Languages and runtimes
+node
+python
+rust
+go
+
+# Build tools
+cmake
+
+# Linting and formatting
+shellcheck
+
+# Dev tools
+gh                  # GitHub CLI
+
+# Libraries and dependencies
+openssl
+readline
+sqlite
+libyaml

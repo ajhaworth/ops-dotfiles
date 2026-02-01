@@ -1,0 +1,3 @@
+# shell.txt - Shell enhancements and terminal tools
+
+tmux

@@ -1,0 +1,4 @@
+# power-user.txt - Power user apps (personal profile only)
+
+raycast             # Spotlight replacement
+istat-menus         # System monitor

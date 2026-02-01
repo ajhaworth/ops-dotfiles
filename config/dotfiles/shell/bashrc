@@ -1,0 +1,82 @@
+# ~/.bashrc - Bash configuration
+
+# If not running interactively, don't do anything
+[[ $- != *i* ]] && return
+
+# ============================================================================
+# Path configuration
+# ============================================================================
+
+# Homebrew (Apple Silicon or Intel)
+if [[ -f /opt/homebrew/bin/brew ]]; then
+    eval "$(/opt/homebrew/bin/brew shellenv)"
+elif [[ -f /usr/local/bin/brew ]]; then
+    eval "$(/usr/local/bin/brew shellenv)"
+fi
+
+# Add local bin directories to PATH
+export PATH="$HOME/.local/bin:$HOME/bin:$PATH"
+
+# ============================================================================
+# History configuration
+# ============================================================================
+
+HISTFILE=~/.bash_history
+HISTSIZE=50000
+HISTFILESIZE=50000
+HISTCONTROL=ignoreboth:erasedups
+
+# Append to history file, don't overwrite
+shopt -s histappend
+
+# Save multi-line commands as one entry
+shopt -s cmdhist
+
+# ============================================================================
+# Shell options
+# ============================================================================
+
+# Update LINES and COLUMNS after each command
+shopt -s checkwinsize
+
+# cd by just typing directory name
+shopt -s autocd 2>/dev/null || true
+
+# Correct minor spelling errors in cd
+shopt -s cdspell
+
+# Extended glob patterns
+shopt -s extglob
+
+# ============================================================================
+# Aliases and functions
+# ============================================================================
+
+# Source aliases file
+[[ -f ~/.aliases ]] && source ~/.aliases
+
+# Source functions file
+[[ -f ~/.functions ]] && source ~/.functions
+
+# ============================================================================
+# Tool integrations
+# ============================================================================
+
+# FZF
+[[ -f ~/.fzf.bash ]] && source ~/.fzf.bash
+
+# Zoxide (smarter cd)
+command -v zoxide &>/dev/null && eval "$(zoxide init bash)"
+
+# Direnv
+command -v direnv &>/dev/null && eval "$(direnv hook bash)"
+
+# Starship prompt
+command -v starship &>/dev/null && eval "$(starship init bash)"
+
+# ============================================================================
+# Local overrides
+# ============================================================================
+
+# Source machine-specific configuration
+[[ -f ~/.bashrc.local ]] && source ~/.bashrc.local

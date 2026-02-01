@@ -1,0 +1,5 @@
+# development.txt - Development applications
+
+visual-studio-code  # Code editor
+ghostty             # Terminal emulator
+fork                # Git client

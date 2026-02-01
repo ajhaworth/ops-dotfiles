@@ -1,0 +1,4 @@
+# utilities.txt - System utilities
+
+keka                # Archive utility
+appcleaner          # App uninstaller
