@@ -26,6 +26,7 @@ window-save-state = default
 # Behavior
 confirm-close-surface = false
 macos-option-as-alt = true
+link-url = true
 
 # Claude Code essentials
 keybind = shift+enter=text:\n
