@@ -18,9 +18,6 @@ apply_trackpad() {
     # Enable natural scrolling
     defaults write NSGlobalDomain com.apple.swipescrolldirection -bool true
 
-    # Tracking speed (0 to 3)
-    defaults write NSGlobalDomain com.apple.trackpad.scaling -float 2.0
-
     # Enable secondary click (right click)
     defaults write com.apple.AppleMultitouchTrackpad TrackpadRightClick -bool true
     defaults write com.apple.driver.AppleBluetoothMultitouch.trackpad TrackpadRightClick -bool true
