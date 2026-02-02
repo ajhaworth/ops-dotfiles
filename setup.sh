@@ -247,6 +247,10 @@ cmd_dotfiles_install() {
     echo ""
     setup_gh_auth
 
+    # Configure Docker for GitHub Container Registry
+    echo ""
+    setup_docker_ghcr_auth
+
     echo ""
     log_success "Dotfiles installation complete"
 }
@@ -462,6 +466,50 @@ setup_gh_auth() {
         done
     else
         log_info "Run 'gh auth login' to authenticate"
+    fi
+}
+
+# Setup Docker authentication with GitHub Container Registry
+setup_docker_ghcr_auth() {
+    log_step "Configuring Docker for GitHub Container Registry"
+
+    # Check if Docker is installed
+    if ! command_exists docker; then
+        log_substep "Docker not installed - skipping ghcr.io authentication"
+        return 0
+    fi
+
+    # Check if GitHub CLI is installed and authenticated
+    if ! command_exists gh; then
+        log_substep "GitHub CLI not installed - skipping ghcr.io authentication"
+        return 0
+    fi
+
+    if ! gh auth status &>/dev/null; then
+        log_substep "GitHub CLI not authenticated - skipping ghcr.io authentication"
+        return 0
+    fi
+
+    # Check if already logged into ghcr.io
+    if docker login ghcr.io --get-login &>/dev/null 2>&1; then
+        log_substep "Docker already authenticated with ghcr.io"
+        return 0
+    fi
+
+    if is_dry_run; then
+        log_dry "Would authenticate Docker with ghcr.io using GitHub CLI token"
+        return 0
+    fi
+
+    log_substep "Authenticating Docker with ghcr.io..."
+    local gh_user
+    gh_user=$(gh api user --jq .login)
+
+    if echo "$(gh auth token)" | docker login ghcr.io -u "$gh_user" --password-stdin; then
+        log_success "Docker authenticated with ghcr.io as $gh_user"
+    else
+        log_error "Failed to authenticate Docker with ghcr.io"
+        return 1
     fi
 }
 
