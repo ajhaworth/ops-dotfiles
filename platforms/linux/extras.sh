@@ -20,6 +20,7 @@ setup_extras() {
     install_eza
     install_delta
     install_zoxide
+    set_default_shell_zsh
 
     log_success "Extra tools installation complete"
 }
@@ -172,5 +173,39 @@ install_zoxide() {
         else
             log_error "zoxide installation failed"
         fi
+    fi
+}
+
+# Set zsh as the default login shell
+set_default_shell_zsh() {
+    log_step "Setting zsh as default shell"
+
+    local zsh_path
+    zsh_path="$(which zsh 2>/dev/null)"
+
+    if [[ -z "$zsh_path" ]]; then
+        log_warn "zsh not found, skipping default shell change"
+        return 0
+    fi
+
+    # Check if already using zsh
+    local current_shell
+    current_shell="$(getent passwd "$USER" | cut -d: -f7)"
+
+    if [[ "$current_shell" == "$zsh_path" ]]; then
+        log_info "zsh is already the default shell"
+        return 0
+    fi
+
+    if is_dry_run; then
+        log_dry "chsh -s $zsh_path"
+        return 0
+    fi
+
+    # Use sudo to avoid password prompt
+    if sudo chsh -s "$zsh_path" "$USER"; then
+        log_success "Default shell changed to zsh (takes effect on next login)"
+    else
+        log_error "Failed to change default shell"
     fi
 }
