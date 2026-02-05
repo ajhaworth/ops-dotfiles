@@ -25,6 +25,10 @@
 #   packages            Install system packages (apt/dnf/etc)
 #   packages ls         List system packages and status
 #
+#   All platforms:
+#   claude-code         Install Claude Code (native installer)
+#   shell-title         Configure shell to set terminal title (for tmux hostname)
+#
 # Options:
 #   --profile <name>    Use specified profile (personal, work)
 #   --dry-run           Show what would be done without making changes
@@ -44,6 +48,7 @@ source "$SCRIPT_DIR/lib/prompt.sh"
 source "$SCRIPT_DIR/lib/symlink.sh"
 source "$SCRIPT_DIR/lib/packages.sh"
 source "$SCRIPT_DIR/lib/dotfiles.sh"
+source "$SCRIPT_DIR/lib/claude-code.sh"
 
 # Default options
 PROFILE=""
@@ -80,6 +85,10 @@ Commands:
     packages            Install system packages (apt/dnf/etc)
     packages ls         List system packages and status
 
+  All platforms:
+    claude-code         Install Claude Code (native installer)
+    shell-title         Configure shell to set terminal title (for tmux hostname)
+
 Options:
     --profile <name>    Use specified profile (personal, work)
     --dry-run           Show what would be done without making changes
@@ -96,6 +105,8 @@ Examples:
     ./setup.sh defaults                 # Apply system preferences (macOS)
     ./setup.sh packages                 # Install system packages (Linux)
     ./setup.sh packages ls              # List system packages (Linux)
+    ./setup.sh claude-code              # Install Claude Code
+    ./setup.sh shell-title              # Configure terminal title for tmux
 
 Available profiles:
 EOF
@@ -254,6 +265,78 @@ cmd_dotfiles_install() {
 
     echo ""
     log_success "Dotfiles installation complete"
+}
+
+# ============================================================================
+# Subcommand: shell-title (configure terminal title for tmux)
+# ============================================================================
+
+cmd_shell_title() {
+    local bashrc="$HOME/.bashrc"
+    local zshrc="$HOME/.zshrc"
+    local marker="# Terminal title for tmux"
+    local bash_config='
+# Terminal title for tmux (shows hostname in status bar)
+PROMPT_COMMAND='\''printf "\\e]2;%s\\a" "$HOSTNAME"'\''${PROMPT_COMMAND:+;$PROMPT_COMMAND}'
+
+    local zsh_config='
+# Terminal title for tmux (shows hostname in status bar)
+precmd_set_title() { print -Pn "\\e]2;%m\\a" }
+autoload -Uz add-zsh-hook
+add-zsh-hook precmd precmd_set_title'
+
+    local added=false
+
+    # Configure bashrc
+    if [[ -f "$bashrc" ]]; then
+        if grep -q "$marker" "$bashrc" 2>/dev/null; then
+            log_info "bashrc already configured"
+        else
+            if is_dry_run; then
+                log_info "[DRY-RUN] Would add terminal title config to $bashrc"
+            else
+                echo "" >> "$bashrc"
+                echo "$marker" >> "$bashrc"
+                echo "$bash_config" >> "$bashrc"
+                log_success "Added terminal title config to $bashrc"
+                added=true
+            fi
+        fi
+    fi
+
+    # Configure zshrc
+    if [[ -f "$zshrc" ]]; then
+        if grep -q "$marker" "$zshrc" 2>/dev/null; then
+            log_info "zshrc already configured"
+        else
+            if is_dry_run; then
+                log_info "[DRY-RUN] Would add terminal title config to $zshrc"
+            else
+                echo "" >> "$zshrc"
+                echo "$marker" >> "$zshrc"
+                echo "$zsh_config" >> "$zshrc"
+                log_success "Added terminal title config to $zshrc"
+                added=true
+            fi
+        fi
+    fi
+
+    # Create bashrc if neither exists
+    if [[ ! -f "$bashrc" ]] && [[ ! -f "$zshrc" ]]; then
+        if is_dry_run; then
+            log_info "[DRY-RUN] Would create $bashrc with terminal title config"
+        else
+            echo "$marker" > "$bashrc"
+            echo "$bash_config" >> "$bashrc"
+            log_success "Created $bashrc with terminal title config"
+            added=true
+        fi
+    fi
+
+    if [[ "$added" == "true" ]]; then
+        echo ""
+        log_info "Restart your shell or run: source ~/.bashrc (or ~/.zshrc)"
+    fi
 }
 
 # ============================================================================
@@ -577,45 +660,6 @@ cmd_defaults_apply() {
 # Argument parsing
 # ============================================================================
 
-# Parse options from arguments (returns remaining args)
-parse_options() {
-    while [[ $# -gt 0 ]]; do
-        case "$1" in
-            --profile)
-                PROFILE="$2"
-                shift 2
-                ;;
-            --profile=*)
-                PROFILE="${1#*=}"
-                shift
-                ;;
-            --dry-run)
-                DRY_RUN="true"
-                shift
-                ;;
-            --force|-f)
-                FORCE="true"
-                shift
-                ;;
-            --help|-h)
-                show_help
-                exit 0
-                ;;
-            -*)
-                log_error "Unknown option: $1"
-                show_help
-                exit 1
-                ;;
-            *)
-                # Not an option, stop parsing
-                break
-                ;;
-        esac
-    done
-    # Return remaining arguments
-    echo "$@"
-}
-
 # Load profile configuration
 load_profile() {
     local profile_name="$1"
@@ -764,6 +808,15 @@ handle_subcommand() {
             esac
             exit 0
             ;;
+        claude-code)
+            PROFILE_CLAUDE_CODE="true"
+            install_claude_code
+            exit 0
+            ;;
+        shell-title)
+            cmd_shell_title
+            exit 0
+            ;;
     esac
 
     # Not a recognized subcommand
@@ -819,10 +872,12 @@ run_full_setup() {
 
     if [[ "$os" == "macos" ]]; then
         echo "  Homebrew:     $(if [[ "$homebrew_enabled" == "true" ]]; then echo "install"; else echo "skip (profile)"; fi)"
+        echo "  Claude Code:  $(if [[ "${PROFILE_CLAUDE_CODE:-false}" == "true" ]]; then echo "install"; else echo "skip (profile)"; fi)"
         echo "  Dotfiles:     $(if [[ "${PROFILE_DOTFILES:-true}" == "false" ]]; then echo "skip (profile)"; else echo "install"; fi)"
         echo "  Defaults:     $(if [[ "${PROFILE_APPLY_DEFAULTS:-true}" == "false" ]]; then echo "skip (profile)"; else echo "apply"; fi)"
         echo "  MAS Apps:     $(if [[ "${PROFILE_MAS:-true}" == "false" ]]; then echo "skip (profile)"; else echo "install"; fi)"
     elif [[ "$os" == "linux" ]]; then
+        echo "  Claude Code:  $(if [[ "${PROFILE_CLAUDE_CODE:-false}" == "true" ]]; then echo "install"; else echo "skip (profile)"; fi)"
         echo "  Dotfiles:     $(if [[ "${PROFILE_DOTFILES:-true}" == "false" ]]; then echo "skip (profile)"; else echo "install"; fi)"
     fi
     echo ""

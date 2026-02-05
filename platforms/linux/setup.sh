@@ -28,7 +28,10 @@ linux_setup() {
     # 4. Extra tools (starship, eza, delta, zoxide)
     setup_extras
 
-    # 5. Dotfiles
+    # 5. Claude Code
+    install_claude_code
+
+    # 6. Dotfiles
     if [[ "${PROFILE_DOTFILES:-true}" == "true" ]]; then
         setup_dotfiles
     else

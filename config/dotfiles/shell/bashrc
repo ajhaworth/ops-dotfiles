@@ -62,6 +62,16 @@ shopt -s extglob
 [[ -f ~/.config/shell/colors.zsh ]] && source ~/.config/shell/colors.zsh
 
 # ============================================================================
+# Terminal title (for tmux pane_title)
+# ============================================================================
+
+# Set terminal title to hostname (updates tmux status when SSH'd to remote)
+set_terminal_title() {
+    printf '\e]2;%s\a' "$HOSTNAME"
+}
+PROMPT_COMMAND="set_terminal_title${PROMPT_COMMAND:+;$PROMPT_COMMAND}"
+
+# ============================================================================
 # Tool integrations
 # ============================================================================
 

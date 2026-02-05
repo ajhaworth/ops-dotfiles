@@ -95,6 +95,24 @@ bindkey '^[[B' history-search-forward
 [[ -f ~/.config/shell/colors.zsh ]] && source ~/.config/shell/colors.zsh
 
 # ============================================================================
+# Terminal title (for tmux pane_title)
+# ============================================================================
+
+# Set terminal title (tmux constructs host:folder, we add command)
+function precmd_set_title() {
+    print -Pn "\e]2;zsh\a"  # At prompt, just show shell name
+}
+
+function preexec_set_title() {
+    local cmd="${1%% *}"  # First word of command
+    print -Pn "\e]2;${cmd}\a"
+}
+
+autoload -Uz add-zsh-hook
+add-zsh-hook precmd precmd_set_title
+add-zsh-hook preexec preexec_set_title
+
+# ============================================================================
 # Tool integrations
 # ============================================================================
 
