@@ -16,25 +16,3 @@
 *~
 .idea/
 .vscode/
-
-# DCC (Digital Content Creation) app caches and binaries
-# Houdini
-dcc/houdini/backup/
-*.bgeo
-*.bgeo.sc
-*.geo
-*.pic
-*.rat
-*.sim
-*.simdata
-
-# Blender
-dcc/blender/cache/
-*.blend1
-*.blend2
-
-# Large reference files (FBX, etc.)
-dcc/reference/
-
-# DCC backups
-.dcc_backup/
