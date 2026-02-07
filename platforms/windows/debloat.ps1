@@ -251,7 +251,7 @@ function Disable-GameDvr {
 }
 
 function Remove-GameBarProtocols {
-    $protocols = @("ms-gamebar", "ms-gamebarservices")
+    $protocols = @("ms-gamebar", "ms-gamebarservices", "ms-gamingoverlay")
     foreach ($protocol in $protocols) {
         $regPath = "Registry::HKEY_CLASSES_ROOT\$protocol"
         if (-not (Test-Path $regPath)) {
